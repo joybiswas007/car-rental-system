@@ -63,8 +63,8 @@ To get this project up and running on your local machine, follow these installat
   ```
   NODE_ENV=production
   PORT=21000
-  CAR_DATA_API=https://ip:Port/carsList
-  MONGODB_URI=mongodb+srv://username:password.ip/rentalDB
+  CAR_DATA_API=https://apiurl/carsList
+  MONGODB_URI=MongoDBUrlherewithDatabaseName
   ```
 
 - **Concurrent Execution**
@@ -82,4 +82,3 @@ To get this project up and running on your local machine, follow these installat
 After completing the installation and setup, you can access the application by:
 
 Opening your web browser and navigating to `http://localhost:5173`.
-
