@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Components/Home";
 import RentACar from "./Components/RentACar";
+import Footer from "./Components/Footer";
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
           <Route exact path="/" element={<Home />} />
           <Route exact path="/rent" element={<RentACar />} />
         </Routes>
-        {/* <Footer /> */}
+        <Footer />
       </Router>
     </>
   );

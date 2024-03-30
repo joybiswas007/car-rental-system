@@ -31,7 +31,13 @@ router.post("/", async (req, res) => {
       total
     });
     await rental.save();
-    res.status(200).send({ statusCode: 200, message: "ordered successfully" });
+    res
+      .status(200)
+      .send({
+        statusCode: 200,
+        orderId: rental._id,
+        message: "ordered successfully"
+      });
   } catch (error) {
     logger.error(error.message);
     res.status(500).send({ statusCode: 500, error: error.message });

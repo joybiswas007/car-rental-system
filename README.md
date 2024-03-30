@@ -1,57 +1,85 @@
-# Car Rental
+# Car Rental System
 
-This is a simple car rental system built using MERN Stack.
+Welcome to our Car Rental System project, an application developed with the MERN Stack (MongoDB, Express.js, React, and Node.js).
 
-## Installation
+## Getting Started
 
-### Backend
+To get this project up and running on your local machine, follow these installation steps.
 
-1. Clone the repository:
+### Setting Up the Backend
 
-`cd car-rental`
-and run `npm install`
+1. **Clone the Repository**
 
-2. Navigate to the `server` directory:
+   First, clone the project repository to your local machine. Open your terminal, navigate to the directory where you want the project to reside, and run the following command:
 
-```
-cd server
-```
+   ```
+   git clone https://github.com/joybiswas007/car-rental-system.git
+   cd car-rental-system
+   npm install
+   ```
 
-3. Install dependencies:
+   This command clones the repository and installs the necessary packages for the backend.
 
-```
-npm install
-```
+2. **Navigate to the Server Directory**
 
-### Frontend
+   Change into the server directory to set up the backend services:
 
-1. Navigate to the `client` directory:
+   ```
+   cd server
+   ```
 
-```
-cd client
-```
+3. **Install Backend Dependencies**
 
-2. Install dependencies:
+   In the `server` directory, run the following command to install the backend dependencies:
 
-```
-npm install
-```
+   ```
+   npm install
+   ```
 
-Create a `.env` file inside the `server` directory and fill in all the details.
+### Setting Up the Frontend
 
-Example `.env` file:
+1. **Navigate to the Client Directory**
 
-```
-NODE_ENV=production
-PORT=21000
-CAR_DATA_API=https://ip:Port/carsList
-MONGODB_URI=mongodb+srv://username:password.ip/rentalDB
-```
+   Open a new terminal window or tab, and navigate to the `client` directory from the root of the project:
 
-Or run concurrently from the cloned directory: `npm run start`
-while running concurrently this fire up the backand and frontend at same time
-so user don't have to run backand and front end separately.
+   ```
+   cd client
+   ```
 
-## Usage
+2. **Install Frontend Dependencies**
 
-1. Open your web browser and go to `http://localhost:5173` to access the application.
+   Run the following command to install the necessary dependencies for the frontend:
+
+   ```
+   npm install
+   ```
+
+### Configuration
+
+- **Environment Variables**
+
+  You need to create a `.env` file in the `server` directory to store your environment variables. Here's an example of what your `.env` file should look like:
+
+  ```
+  NODE_ENV=production
+  PORT=21000
+  CAR_DATA_API=https://ip:Port/carsList
+  MONGODB_URI=mongodb+srv://username:password.ip/rentalDB
+  ```
+
+- **Concurrent Execution**
+
+  To simplify the development process, you can run both the backend and frontend concurrently. From the root directory of the project, execute the following command:
+
+  ```
+  npm run start
+  ```
+
+  This command starts both the backend and frontend services simultaneously, eliminating the need to run them in separate terminal windows or tabs.
+
+## How to Use
+
+After completing the installation and setup, you can access the application by:
+
+Opening your web browser and navigating to `http://localhost:5173`.
+

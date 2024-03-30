@@ -1,9 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
+import CustomerDetailsForm from "./CustomerDetails";
+import ReservationDetailsForm from "./ReservationDetails";
+import AdditionalOptionsForm from "./AdditionalOptions";
+import VehicleDetails from "./VehicleDetails";
+import ChargesSummary from "./ChargesSummary";
+import GeneratePDF from "../utils/PDFGenerator";
 
 const ReservationForm = ({ userChosenVehicle }) => {
   const vehicle = userChosenVehicle[0];
   const { type, make, rates } = vehicle;
+  const { hourly, daily, weekly } = rates;
 
   const [customerDetails, setCustomerDetails] = useState({
     firstName: "",
@@ -16,8 +23,10 @@ const ReservationForm = ({ userChosenVehicle }) => {
     pickupDate: "",
     returnDate: "",
     rentalType: "Hourly",
-    vehicleType: type || "",
-    vehicleName: make || "",
+    vehicle: {
+      type: type || "",
+      make: make || "",
+    },
     additionalOptions: {
       tax: false,
       liabilityInsurance: false,
@@ -61,8 +70,6 @@ const ReservationForm = ({ userChosenVehicle }) => {
   };
 
   const calculatePrice = () => {
-    const { hourly, daily, weekly } = rates;
-
     const duration = calculateDuration();
     let price = 0;
     switch (reservationDetails.rentalType) {
@@ -105,6 +112,7 @@ const ReservationForm = ({ userChosenVehicle }) => {
     try {
       const { pickupDate, returnDate, rentalType } = reservationDetails;
       const { firstName, lastName, email, number } = customerDetails;
+      const total = calculatePrice();
       const response = await axios.post(
         "http://localhost:21000/api/rentacar",
         {
@@ -117,7 +125,7 @@ const ReservationForm = ({ userChosenVehicle }) => {
           phone: number,
           carType: type,
           carName: make,
-          total: calculatePrice().toString(),
+          total: total ? total.toString() : "0",
         },
         {
           headers: {
@@ -125,20 +133,28 @@ const ReservationForm = ({ userChosenVehicle }) => {
           },
         }
       );
-      if (response.data.statusCode === 200) {
-        console.log("Success:", response.data.message);
-      } else {
-        console.error("error");
+      if (response.data.statusCode !== 200) {
+        console.log("error");
       }
+
+      const pdf = GeneratePDF(
+        reservationDetails,
+        customerDetails,
+        rates,
+        calculatePrice,
+        calculateTotalPrice,
+        response.data.orderId
+      );
+      pdf.save(`Reservation_RA${response.data.orderId}.pdf`);
     } catch (error) {
       console.error("Error submitting rental order:", error.message);
     }
   };
-  
+
   return (
     <div className="mx-auto p-6 bg-white rounded-lg shadow-xl">
       <div className="flex justify-start mb-6 text-2xl font-bold text-gray-800">
-        Reserve information
+        Reservation information
       </div>
       <div className="flex justify-end mb-6">
         <button
@@ -150,148 +166,36 @@ const ReservationForm = ({ userChosenVehicle }) => {
       </div>
       <div className="grid grid-cols-3 gap-6">
         <section className="col-span-1">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Reservation Details
-          </h2>
-          <div className="mt-2">
-            <input
-              className="form-input px-2 py-1 border rounded-lg w-full"
-              type="date"
-              name="pickupDate"
-              placeholder="Pickup Date"
-              value={reservationDetails.pickupDate}
-              onChange={handleReservationInputChange}
-            />
-            <input
-              className="form-input px-2 py-1 border rounded-lg w-full mt-2"
-              type="date"
-              name="returnDate"
-              placeholder="Return Date"
-              value={reservationDetails.returnDate}
-              onChange={handleReservationInputChange}
-            />
-            <select
-              className="form-select px-2 py-1 border rounded-lg w-full mt-2"
-              name="rentalType"
-              value={reservationDetails.rentalType}
-              onChange={handleReservationInputChange}
-            >
-              <option value="Hourly">Hourly</option>
-              <option value="Daily">Daily</option>
-              <option value="Weekly">Weekly</option>
-            </select>
-          </div>
+          <ReservationDetailsForm
+            reservationDetails={reservationDetails}
+            handleReservationInputChange={handleReservationInputChange}
+          />
         </section>
         <section className="col-span-2">
           <div className="grid grid-cols-2 gap-6">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Customer Details
-              </h2>
-              <div className="mt-2">
-                <input
-                  className="form-input px-2 py-1 border rounded-lg w-full"
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={customerDetails.firstName}
-                  onChange={handleCustomerInputChange}
-                />
-                <input
-                  className="form-input px-2 py-1 border rounded-lg w-full mt-2"
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={customerDetails.lastName}
-                  onChange={handleCustomerInputChange}
-                />
-                <input
-                  className="form-input px-2 py-1 border rounded-lg w-full mt-2"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={customerDetails.email}
-                  onChange={handleCustomerInputChange}
-                />
-                <input
-                  className="form-input px-2 py-1 border rounded-lg w-full mt-2"
-                  type="text"
-                  name="number"
-                  placeholder="Phone Number"
-                  value={customerDetails.number}
-                  onChange={handleCustomerInputChange}
-                />
-              </div>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                Additional Charges
-              </h3>
-              <div className="mt-2">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    name="tax"
-                    checked={reservationDetails.additionalOptions.tax}
-                    onChange={handleReservationInputChange}
-                  />
-                  <span>Tax (11.5%)</span>
-                </label>
-                <label className="flex items-center space-x-2 mt-2">
-                  <input
-                    type="checkbox"
-                    name="liabilityInsurance"
-                    checked={
-                      reservationDetails.additionalOptions.liabilityInsurance
-                    }
-                    onChange={handleReservationInputChange}
-                  />
-                  <span>Liability Insurance ($15)</span>
-                </label>
-                <label className="flex items-center space-x-2 mt-2">
-                  <input
-                    type="checkbox"
-                    name="collisionDamageWaiver"
-                    checked={
-                      reservationDetails.additionalOptions.collisionDamageWaiver
-                    }
-                    onChange={handleReservationInputChange}
-                  />
-                  <span>Collision Damage Waiver ($9)</span>
-                </label>
-              </div>
-            </div>
+            <CustomerDetailsForm
+              customerDetails={customerDetails}
+              handleCustomerInputChange={handleCustomerInputChange}
+            />
+            <AdditionalOptionsForm
+              reservationDetails={reservationDetails}
+              handleReservationInputChange={handleReservationInputChange}
+            />
           </div>
         </section>
       </div>
       <div className="flex justify-between items-center mt-6">
         <section className="w-1/3">
-          <div>
-            <h3 className="text-lg font-medium text-gray-800">Vehicle</h3>
-            <div className="mt-1 space-y-1">
-              <p className="form-input px-2 py-1 border rounded-lg w-full mt-2">
-                Type: {reservationDetails.vehicleType}
-              </p>
-              <p className="form-input px-2 py-1 border rounded-lg w-full mt-2">
-                Name: {reservationDetails.vehicleName}
-              </p>
-            </div>
-          </div>
+          <VehicleDetails reservationDetails={reservationDetails} />
         </section>
         <section className="w-1/2">
-          <h3 className="text-xl font-semibold text-gray-900">
-            Charges Summary
-          </h3>
-          <div className="text-gray-700">
-            <p>Duration: {calculateDuration()} days</p>
-            <p>Base Price: ${calculatePrice().toFixed(2)}</p>
-            <p>
-              Additional Charges: ${calculateAdditionalCharges().toFixed(2)}
-            </p>
-            <p className="font-medium">
-              Total Price: ${calculateTotalPrice().toFixed(2)}
-            </p>
-          </div>
+          <ChargesSummary
+            reservationDetails={reservationDetails}
+            calculateDuration={calculateDuration}
+            calculatePrice={calculatePrice}
+            calculateAdditionalCharges={calculateAdditionalCharges}
+            calculateTotalPrice={calculateTotalPrice}
+          />
         </section>
       </div>
     </div>

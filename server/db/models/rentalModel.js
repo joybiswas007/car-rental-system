@@ -12,8 +12,8 @@ const rentalSchema = new mongoose.Schema(
     },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, require: true, unique: true },
+    email: { type: String, required: true },
+    phone: { type: String, require: true },
     veichle: {
       veichleType: { type: String, required: true },
       Name: { type: String, required: true }
