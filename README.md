@@ -1,6 +1,6 @@
 # Car Rental System
 
-Welcome to our Car Rental System project, an application developed with the MERN Stack (MongoDB, Express.js, React, and Node.js).
+Welcome to our Car Rental System project, an application developed with the MERN Stack (MongoDB, Express.js, React, and Node.js) and Tailwind CSS.
 
 ## Getting Started
 
